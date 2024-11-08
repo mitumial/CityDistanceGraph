@@ -1,5 +1,6 @@
 import networkx as nx
 import customtkinter as ctk
+from CTkTable import *
 
 
 def create_graph() -> nx.Graph:
@@ -30,10 +31,12 @@ def create_tab_nodes(G, frm: ctk.CTkFrame, nodes: list[str]):
     tabs: dict[str] = {}
     for node in nodes:
         tabview.add(node)
-        tabs[node] = ctk.CTkTextbox(
-            tabview.tab(node),
-            width=650,
-            height=200,
+        tabs[node] = CTkTable(
+            master=tabview.tab(node),
+            row=6,
+            column=2,
+            values=[["Vecino", "Distancia"]],
+            header_color="#1f538d",
         )
         tabs[node].grid(row=0, column=0)
     return tabview, tabs
@@ -43,13 +46,15 @@ def fill_tabs(G: nx.Graph, tabs: dict):
     nodes = list(G.nodes)
 
     for node in nodes:
-        i = 0
-        current_textbox = tabs[node]
-        for edge in G.edges(node):
-            current_textbox.insert(f"{i}.0", edge[1] + "\n")
+        i = 1
+        current_table = tabs[node]
+        for edge in G.edges(node, data=True):
+            current_table.insert(i, 0, edge[1])
+            current_table.insert(i, 1, edge[2]["weight"])
             i += 1
 
-    # current_tab = tabview.get()
+
+# current_tab = tabview.get()
 
 
 # current_textbox.delete("0.0", "end")
